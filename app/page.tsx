@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { AddToCartButton } from "@/components/add-to-cart-button";
 import { getProducts } from "@/lib/products";
 
 const priceFormatter = new Intl.NumberFormat("en-US", {
@@ -13,11 +14,11 @@ export default async function Home() {
 
   if (!firstProduct) {
     return (
-      <section className="flex min-h-[60vh] flex-col items-center justify-center rounded-[2rem] bg-[#f0efdc] px-6 text-center">
+      <section className="flex min-h-[60vh] flex-col items-center justify-center rounded-4xl bg-[#f0efdc] px-6 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#f04b2f]">
           LACE.
         </p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em]">
+        <h1 className="mt-4 text-4xl font-semibold tracking-tighter">
           New shoes are on the way.
         </h1>
         <p className="mt-4 max-w-md leading-7 text-[#5d5b50]">
@@ -52,7 +53,7 @@ export default async function Home() {
           </a>
         </div>
 
-        <div className="relative min-h-90 bg-[#d6e6ff] lg:min-h-155">
+        <div className="group relative min-h-90 bg-[#d6e6ff] lg:min-h-155">
           <div className="absolute inset-x-8 bottom-7 top-8 rounded-full border border-[#171713]/10 sm:inset-x-16" />
           <Image
             src={featuredProduct.image}
@@ -73,6 +74,11 @@ export default async function Home() {
               {priceFormatter.format(featuredProduct.priceInCents / 100)}
             </p>
           </div>
+          <AddToCartButton
+            productId={featuredProduct.id}
+            productName={featuredProduct.name}
+            className="bottom-7 right-7 sm:bottom-10 sm:right-10"
+          />
         </div>
       </section>
 
@@ -109,6 +115,10 @@ export default async function Home() {
                   sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
                   className="object-contain p-5 mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
                 />
+                <AddToCartButton
+                  productId={product.id}
+                  productName={product.name}
+                />
               </div>
               <div className="mt-5 flex items-start justify-between gap-4">
                 <div>
@@ -141,13 +151,17 @@ export default async function Home() {
             with the rest of your closet.
           </p>
         </div>
-        <div className="relative min-h-80 bg-[#ff8065]">
+        <div className="group relative min-h-80 bg-[#ff8065]">
           <Image
-            src="/shoe1.png"
-            alt="Ember High Top sneaker"
+            src={firstProduct.image}
+            alt={`${firstProduct.name} in ${firstProduct.color}`}
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
             className="object-contain p-8 mix-blend-multiply"
+          />
+          <AddToCartButton
+            productId={firstProduct.id}
+            productName={firstProduct.name}
           />
         </div>
       </section>

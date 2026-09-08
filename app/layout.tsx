@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { CartLink } from "@/components/cart-link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -53,9 +54,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 >
                   Finnley
                 </Link>
-                <span className="rounded-full border border-black/15 px-3 py-1.5">
-                  Bag · 0
-                </span>
+                <CartLink />
               </div>
             </nav>
           </header>

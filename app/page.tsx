@@ -9,7 +9,25 @@ const priceFormatter = new Intl.NumberFormat("en-US", {
 
 export default async function Home() {
   const products = await getProducts();
-  const featuredProduct = products[2];
+  const firstProduct = products.at(0);
+
+  if (!firstProduct) {
+    return (
+      <section className="flex min-h-[60vh] flex-col items-center justify-center rounded-[2rem] bg-[#f0efdc] px-6 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#f04b2f]">
+          LACE.
+        </p>
+        <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em]">
+          New shoes are on the way.
+        </h1>
+        <p className="mt-4 max-w-md leading-7 text-[#5d5b50]">
+          The catalog is empty right now. Check back soon for the next drop.
+        </p>
+      </section>
+    );
+  }
+
+  const featuredProduct = products.at(2) ?? firstProduct;
 
   return (
     <>

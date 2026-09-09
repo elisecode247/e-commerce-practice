@@ -18,6 +18,7 @@ type ProductRow = Product & QueryResultRow;
 
 export async function getProducts(): Promise<Product[]> {
   await connection();
+console.log('this should appear in the terminal')
 
   const result = await db.query<ProductRow>(`
     SELECT

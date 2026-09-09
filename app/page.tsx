@@ -11,7 +11,7 @@ const priceFormatter = new Intl.NumberFormat("en-US", {
 export default async function Home() {
   const products = await getProducts();
   const firstProduct = products.at(0);
-
+console.log('this should appear in the terminal')
   if (!firstProduct) {
     return (
       <section className="flex min-h-[60vh] flex-col items-center justify-center rounded-4xl bg-[#f0efdc] px-6 text-center">

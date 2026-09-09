@@ -14,7 +14,7 @@ export function AddToCartButton({
   className = "",
 }: AddToCartButtonProps) {
   const { addItem } = useCart();
-
+    console.log('this should appear in the browser');
   return (
     <button
       type="button"

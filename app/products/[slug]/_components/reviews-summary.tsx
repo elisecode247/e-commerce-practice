@@ -12,7 +12,16 @@ type ReviewsSummaryProps = {
 export default async function ReviewsSummary({
   productId,
 }: ReviewsSummaryProps) {
-  const reviews = await getReviewsByProductId(productId);
+  const { reviews, errorMessage } = await getReviewsByProductId(productId);
+
+  if (errorMessage) {
+    return (
+      <p role="alert" className="max-w-xs text-right text-xs text-red-700">
+        {errorMessage}
+      </p>
+    );
+  }
+
   const averageRating = reviews.length
     ? reviews.reduce((total, review) => total + review.rating, 0) / reviews.length
     : 0;

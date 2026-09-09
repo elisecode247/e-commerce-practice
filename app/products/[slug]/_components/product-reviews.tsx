@@ -19,7 +19,24 @@ const reviewDateFormatter = new Intl.DateTimeFormat("en-US", {
 export default async function ProductReviews({
   productId,
 }: ProductReviewsProps) {
-  const reviews = await getReviewsByProductId(productId);
+  const { reviews, errorMessage } = await getReviewsByProductId(productId);
+
+  if (errorMessage) {
+    return (
+      <section id="reviews" className="scroll-mt-24 py-20 sm:py-28">
+        <div
+          role="alert"
+          className="rounded-3xl border border-red-200 bg-red-50 p-6 text-red-950"
+        >
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-red-700">
+            Reviews unavailable
+          </p>
+          <p className="mt-3 max-w-2xl text-sm leading-6">{errorMessage}</p>
+        </div>
+      </section>
+    );
+  }
+
   const averageRating = reviews.length
     ? reviews.reduce((total, review) => total + review.rating, 0) / reviews.length
     : 0;

@@ -3,8 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/add-to-cart-button";
-import { getProductBySlug, getRelatedProducts } from "@/lib/products";
-import { getReviewsByProductId } from "@/lib/reviews";
+import { getProductBySlug } from "@/lib/products";
+import ReviewsSummary from "./_components/reviews-summary";
+import ProductReviews from "./_components/product-reviews";
+import RelatedProducts from "./_components/related-products";
+import LoadingReviewsSummary from "./_components/loading-reviews-summary";
+import LoadingProductReviews from "./_components/loading-product-reviews";
+import LoadingRelatedProducts from "./_components/loading-related-products";
+import { Suspense } from "react";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -15,18 +21,6 @@ const priceFormatter = new Intl.NumberFormat("en-US", {
   currency: "USD",
   minimumFractionDigits: 0,
 });
-
-const reviewDateFormatter = new Intl.DateTimeFormat("en-US", {
-  month: "long",
-  day: "numeric",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-function stars(rating: number) {
-  const roundedRating = Math.max(0, Math.min(5, Math.round(rating)));
-  return `${"★".repeat(roundedRating)}${"☆".repeat(5 - roundedRating)}`;
-}
 
 export async function generateMetadata({
   params,
@@ -51,20 +45,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) {
     notFound();
   }
-
-  const [relatedProducts, reviews] = await Promise.all([
-    getRelatedProducts(product.id, product.category),
-    getReviewsByProductId(product.id),
-  ]);
-
-  const averageRating = reviews.length
-    ? reviews.reduce((total, review) => total + review.rating, 0) /
-      reviews.length
-    : 0;
-  const averageRatingLabel = averageRating.toFixed(1);
-  const reviewCountLabel = `${reviews.length} ${
-    reviews.length === 1 ? "review" : "reviews"
-  }`;
 
   return (
     <div className="py-4 sm:py-8">
@@ -120,20 +100,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <p className="text-xl font-semibold">
               {priceFormatter.format(product.priceInCents / 100)}
             </p>
-            <a
-              href="#reviews"
-              className="flex items-center gap-2 text-sm transition-opacity hover:opacity-60"
-            >
-              <span
-                aria-label={`${averageRatingLabel} out of 5 stars`}
-                className="tracking-widest"
-              >
-                {stars(averageRating)}
-              </span>
-              <span className="text-zinc-500">
-                {averageRatingLabel} · {reviewCountLabel}
-              </span>
-            </a>
+            <Suspense fallback={<LoadingReviewsSummary />}>
+              <ReviewsSummary productId={product.id} />
+            </Suspense>
           </div>
 
           <p className="mt-7 border-t border-black/10 pt-7 leading-7 text-zinc-600">
@@ -218,151 +187,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
       </section>
-
-      <section id="reviews" aria-labelledby="reviews-heading" className="scroll-mt-24 py-20 sm:py-28">
-        <div className="grid gap-10 border-b border-black/10 pb-10 md:grid-cols-[0.7fr_1.3fr]">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#f04b2f]">
-              Worn and loved
-            </p>
-            <h2
-              id="reviews-heading"
-              className="mt-3 text-4xl font-semibold tracking-[-0.045em]"
-            >
-              Customer reviews
-            </h2>
-          </div>
-          <div className="flex items-end gap-5 md:justify-end">
-            <p className="text-7xl font-semibold leading-none tracking-[-0.06em]">
-              {averageRatingLabel}
-            </p>
-            <div>
-              <p
-                aria-label={`${averageRatingLabel} out of 5 stars`}
-                className="tracking-[0.12em]"
-              >
-                {stars(averageRating)}
-              </p>
-              <p className="mt-1 text-sm text-zinc-500">
-                Based on {reviewCountLabel}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {reviews.length > 0 ? (
-          <div className="grid gap-5 pt-8 md:grid-cols-2 lg:grid-cols-3">
-            {reviews.map((review) => (
-              <article
-                key={review.id}
-                className="rounded-3xl border border-black/10 bg-white p-6"
-              >
-                <p
-                  aria-label={`${review.rating} out of 5 stars`}
-                  className="text-sm tracking-[0.12em]"
-                >
-                  {stars(review.rating)}
-                </p>
-                <h3 className="mt-5 text-lg font-semibold tracking-tight">
-                  {review.title}
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-zinc-500">
-                  {review.body}
-                </p>
-                <footer className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-black/10 pt-4 text-xs text-zinc-500">
-                  <span className="font-semibold text-[#171713]">
-                    {review.reviewerName}
-                  </span>
-                  {review.isVerifiedPurchase ? (
-                    <>
-                      <span aria-hidden="true">·</span>
-                      <span className="font-medium text-emerald-700">
-                        Verified purchase
-                      </span>
-                    </>
-                  ) : null}
-                  <span aria-hidden="true">·</span>
-                  <time dateTime={review.createdAt.toISOString()}>
-                    {reviewDateFormatter.format(review.createdAt)}
-                  </time>
-                </footer>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <p className="pt-8 text-sm text-zinc-500">
-            No reviews yet. Be the first to review this shoe.
-          </p>
-        )}
-      </section>
-
-      {relatedProducts.length > 0 ? (
-        <section aria-labelledby="related-heading" className="pb-12">
-          <div className="flex items-end justify-between gap-6">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#f04b2f]">
-                Keep looking
-              </p>
-              <h2
-                id="related-heading"
-                className="mt-3 text-4xl font-semibold tracking-[-0.045em]"
-              >
-                Related shoes
-              </h2>
-            </div>
-            <Link
-              href="/#collection"
-              className="hidden text-sm font-semibold underline decoration-black/25 underline-offset-4 transition-opacity hover:opacity-55 sm:block"
-            >
-              Shop all
-            </Link>
-          </div>
-
-          <div className="mt-8 grid gap-5 sm:grid-cols-3">
-            {relatedProducts.map((relatedProduct) => (
-              <article key={relatedProduct.id} className="group">
-                <div className="relative aspect-4/3 overflow-hidden rounded-3xl bg-[#f4f2ec]">
-                  <Link
-                    href={`/products/${relatedProduct.slug}`}
-                    aria-label={`View ${relatedProduct.name}`}
-                    className="absolute inset-0 z-10"
-                  >
-                    <Image
-                      src={relatedProduct.image}
-                      alt={`${relatedProduct.name} in ${relatedProduct.color}`}
-                      fill
-                      sizes="(min-width: 640px) 30vw, 100vw"
-                      className="object-contain p-5 mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </Link>
-                  <AddToCartButton
-                    productId={relatedProduct.id}
-                    productName={relatedProduct.name}
-                  />
-                </div>
-                <div className="mt-4 flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="font-semibold tracking-tight">
-                      <Link
-                        href={`/products/${relatedProduct.slug}`}
-                        className="transition-colors hover:text-[#f04b2f]"
-                      >
-                        {relatedProduct.name}
-                      </Link>
-                    </h3>
-                    <p className="mt-1 text-sm text-zinc-500">
-                      {relatedProduct.color}
-                    </p>
-                  </div>
-                  <p className="shrink-0 text-sm font-semibold">
-                    {priceFormatter.format(relatedProduct.priceInCents / 100)}
-                  </p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <Suspense fallback={<LoadingProductReviews />}>
+        <ProductReviews productId={product.id} />
+      </Suspense>
+      <Suspense fallback={<LoadingRelatedProducts />}>
+        <RelatedProducts product={product} />
+      </Suspense>
     </div>
   );
 }

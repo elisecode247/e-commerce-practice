@@ -1,7 +1,7 @@
 import "server-only";
+import { cacheLife } from 'next/cache'
 
 import type { QueryResultRow } from "pg";
-import { connection } from "next/server";
 import { cache } from "react";
 import { db } from "@/lib/db";
 
@@ -21,9 +21,8 @@ const REVIEW_FETCH_DELAY_MS = 5_000;
 
 export const getReviewsByProductId = cache(
   async (productId: string): Promise<Review[]> => {
-    await connection();
+    'use cache';
     await new Promise((resolve) => setTimeout(resolve, REVIEW_FETCH_DELAY_MS));
-
     const result = await db.query<ReviewRow>(
       `
         SELECT
@@ -40,7 +39,7 @@ export const getReviewsByProductId = cache(
       `,
       [productId],
     );
-
+    cacheLife('reviews');
     return result.rows;
   },
 );

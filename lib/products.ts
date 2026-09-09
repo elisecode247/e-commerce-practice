@@ -2,6 +2,7 @@ import "server-only";
 
 import type { QueryResultRow } from "pg";
 import { connection } from "next/server";
+import { cacheLife } from 'next/cache'
 import { cache } from "react";
 import { db } from "@/lib/db";
 
@@ -71,7 +72,7 @@ export const getProductBySlug = cache(
 
 export const getRelatedProducts = cache(
   async (productId: string, category: string): Promise<Product[]> => {
-    await connection();
+    "use cache";
     await new Promise((resolve) =>
       setTimeout(resolve, RELATED_PRODUCTS_FETCH_DELAY_MS),
     );
@@ -97,7 +98,7 @@ export const getRelatedProducts = cache(
       `,
       [productId, category],
     );
-
+    cacheLife("relatedProducts")
     return result.rows;
   },
 );

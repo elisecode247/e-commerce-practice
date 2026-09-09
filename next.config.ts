@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
       expire: 3600,     // 1 hour: Max lifetime. Cache is forcefully cleared after this
     },
     relatedProducts: {
-        stale: 300,
+      stale: 300,
       revalidate: 900,
       expire: 3600,
     }

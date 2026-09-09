@@ -6,21 +6,27 @@ type AddToCartButtonProps = {
   productId: string;
   productName: string;
   className?: string;
+  variant?: "overlay" | "inline";
 };
 
 export function AddToCartButton({
   productId,
   productName,
   className = "",
+  variant = "overlay",
 }: AddToCartButtonProps) {
   const { addItem } = useCart();
-    console.log('this should appear in the browser');
+  const variantClasses =
+    variant === "overlay"
+      ? "absolute bottom-4 right-4 z-30 translate-y-0 opacity-100 shadow-lg sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:focus-visible:translate-y-0 sm:focus-visible:opacity-100"
+      : "relative w-full justify-center px-6 py-4 text-sm";
+
   return (
     <button
       type="button"
       aria-label={`Add ${productName} to bag`}
       onClick={() => addItem(productId)}
-      className={`absolute bottom-4 right-4 z-30 inline-flex translate-y-0 items-center gap-2 rounded-full bg-[#171713] px-4 py-2.5 text-xs font-semibold text-white opacity-100 shadow-lg transition duration-300 hover:bg-[#f04b2f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#171713] sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:focus-visible:translate-y-0 sm:focus-visible:opacity-100 ${className}`}
+      className={`inline-flex items-center gap-2 rounded-full bg-[#171713] px-4 py-2.5 text-xs font-semibold text-white transition duration-300 hover:bg-[#f04b2f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#171713] ${variantClasses} ${className}`}
     >
       <svg
         aria-hidden="true"

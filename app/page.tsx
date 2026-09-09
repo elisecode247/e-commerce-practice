@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { getProducts } from "@/lib/products";
 
@@ -55,15 +56,24 @@ console.log('this should appear in the terminal')
 
         <div className="group relative min-h-90 bg-[#d6e6ff] lg:min-h-155">
           <div className="absolute inset-x-8 bottom-7 top-8 rounded-full border border-[#171713]/10 sm:inset-x-16" />
-          <Image
-            src={featuredProduct.image}
-            alt={`${featuredProduct.name} in ${featuredProduct.color}`}
-            fill
-            priority
-            sizes="(min-width: 1024px) 58vw, 100vw"
-            className="z-10 object-contain p-7 mix-blend-multiply sm:p-12"
-          />
-          <div className="absolute bottom-7 left-7 z-20 rounded-2xl bg-white/90 px-5 py-4 shadow-sm backdrop-blur sm:bottom-10 sm:left-10">
+          <Link
+            href={`/products/${featuredProduct.slug}`}
+            aria-label={`View ${featuredProduct.name}`}
+            className="absolute inset-0 z-10"
+          >
+            <Image
+              src={featuredProduct.image}
+              alt={`${featuredProduct.name} in ${featuredProduct.color}`}
+              fill
+              priority
+              sizes="(min-width: 1024px) 58vw, 100vw"
+              className="object-contain p-7 mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.02] sm:p-12"
+            />
+          </Link>
+          <Link
+            href={`/products/${featuredProduct.slug}`}
+            className="absolute bottom-7 left-7 z-20 rounded-2xl bg-white/90 px-5 py-4 shadow-sm backdrop-blur transition-transform hover:-translate-y-0.5 sm:bottom-10 sm:left-10"
+          >
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#f04b2f]">
               Featured
             </p>
@@ -73,7 +83,7 @@ console.log('this should appear in the terminal')
             <p className="text-sm text-[#5d5b50]">
               {priceFormatter.format(featuredProduct.priceInCents / 100)}
             </p>
-          </div>
+          </Link>
           <AddToCartButton
             productId={featuredProduct.id}
             productName={featuredProduct.name}
@@ -107,14 +117,20 @@ console.log('this should appear in the terminal')
                     {product.badge}
                   </span>
                 ) : null}
-                <Image
-                  src={product.image}
-                  alt={`${product.name} in ${product.color}`}
-                  fill
-                  priority={index < 3}
-                  sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
-                  className="object-contain p-5 mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
-                />
+                <Link
+                  href={`/products/${product.slug}`}
+                  aria-label={`View ${product.name}`}
+                  className="absolute inset-0 z-10"
+                >
+                  <Image
+                    src={product.image}
+                    alt={`${product.name} in ${product.color}`}
+                    fill
+                    priority={index < 3}
+                    sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
+                    className="object-contain p-5 mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
+                  />
+                </Link>
                 <AddToCartButton
                   productId={product.id}
                   productName={product.name}
@@ -123,7 +139,12 @@ console.log('this should appear in the terminal')
               <div className="mt-5 flex items-start justify-between gap-4">
                 <div>
                   <h3 className="font-semibold tracking-tight text-[#171713]">
-                    {product.name}
+                    <Link
+                      href={`/products/${product.slug}`}
+                      className="transition-colors hover:text-[#f04b2f]"
+                    >
+                      {product.name}
+                    </Link>
                   </h3>
                   <p className="mt-1 text-sm text-zinc-500">
                     {product.category} · {product.color}
@@ -152,13 +173,19 @@ console.log('this should appear in the terminal')
           </p>
         </div>
         <div className="group relative min-h-80 bg-[#ff8065]">
-          <Image
-            src={firstProduct.image}
-            alt={`${firstProduct.name} in ${firstProduct.color}`}
-            fill
-            sizes="(min-width: 768px) 50vw, 100vw"
-            className="object-contain p-8 mix-blend-multiply"
-          />
+          <Link
+            href={`/products/${firstProduct.slug}`}
+            aria-label={`View ${firstProduct.name}`}
+            className="absolute inset-0 z-10"
+          >
+            <Image
+              src={firstProduct.image}
+              alt={`${firstProduct.name} in ${firstProduct.color}`}
+              fill
+              sizes="(min-width: 768px) 50vw, 100vw"
+              className="object-contain p-8 mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
+            />
+          </Link>
           <AddToCartButton
             productId={firstProduct.id}
             productName={firstProduct.name}

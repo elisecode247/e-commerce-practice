@@ -10,6 +10,7 @@ import RelatedProducts from "./_components/related-products";
 import LoadingReviewsSummary from "./_components/loading-reviews-summary";
 import LoadingProductReviews from "./_components/loading-product-reviews";
 import LoadingRelatedProducts from "./_components/loading-related-products";
+import { FavoriteButton } from "./_components/favorite-button";
 import { Suspense } from "react";
 
 type ProductPageProps = {
@@ -139,12 +140,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </ul>
           </div>
 
-          <div className="mt-7">
+          <div className="mt-7 flex gap-3">
             <AddToCartButton
               productId={product.id}
               productName={product.name}
               variant="inline"
             />
+            <FavoriteButton productName={product.name} />
           </div>
 
           <div className="mt-7 divide-y divide-black/10 border-y border-black/10">

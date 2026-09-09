@@ -2,7 +2,7 @@ import { getRelatedProducts, type Product } from "@/lib/products";
 import Link from "next/link";
 import Image from "next/image";
 import { AddToCartButton } from "@/components/add-to-cart-button";
-
+import { LikeButton } from "./like-button";
 const priceFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
@@ -58,6 +58,10 @@ export default async function RelatedProducts({ product }: RelatedProductsProps)
                   <AddToCartButton
                     productId={relatedProduct.id}
                     productName={relatedProduct.name}
+                  />
+                  <LikeButton
+                    productName={relatedProduct.name}
+                    className="absolute bottom-4 left-4 z-30 shadow-lg"
                   />
                 </div>
                 <div className="mt-4 flex items-start justify-between gap-4">
